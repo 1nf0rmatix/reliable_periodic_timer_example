@@ -45,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? timer;
   Isolate? isolate;
   int millisLastTick = 0;
-  bool needsTick = true;
 
   double overallDeviation = 0;
   var inAccurateTicks = 0;
@@ -100,15 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
         var now = DateTime.now().millisecondsSinceEpoch;
         var duration = now - millisLastTick;
 
-        if (duration >= tickRate && needsTick) {
+        if (duration >= tickRate) {
           _onTimerTick();
 
           millisLastTick = now;
-          needsTick = false;
-        }
-
-        if (duration < tickRate) {
-          needsTick = true;
         }
       },
     );
@@ -217,7 +211,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _resetStatistics() {
     timer?.cancel();
-    needsTick = true;
     millisLastTick = DateTime.now().millisecondsSinceEpoch;
     deviationInfo.clear();
 
