@@ -9,7 +9,7 @@ class SafeIntervalTimer {
   static const _defaultBpm = 240;
 
   var bpm = _defaultBpm;
-  var tickRate = millisecondsPerMinute / _defaultBpm;
+  var intervalInMilliseconds = millisecondsPerMinute / _defaultBpm;
 
   Timer? timer;
   Isolate? isolate;
@@ -26,7 +26,7 @@ class SafeIntervalTimer {
     _resetStatistics();
 
     timer = Timer.periodic(
-      Duration(milliseconds: tickRate.floor()),
+      Duration(milliseconds: intervalInMilliseconds.floor()),
       (timer) async {
         _onTimerTick();
       },
@@ -42,8 +42,8 @@ class SafeIntervalTimer {
     var duration = now - millisLastTick;
 
     // ignore the very first tick since there is natural delay between setting up the timer and the first tick
-    if (duration != tickRate && ticksOverall > 0) {
-      var deviation = (duration - tickRate).abs();
+    if (duration != intervalInMilliseconds && ticksOverall > 0) {
+      var deviation = (duration - intervalInMilliseconds).abs();
       deviationInfo.add('Deviation in tick #$ticksOverall - $deviation ms');
 
       inAccurateTicks++;
@@ -68,7 +68,7 @@ class SafeIntervalTimer {
         var now = DateTime.now().millisecondsSinceEpoch;
         var duration = now - millisLastTick;
 
-        if (duration >= tickRate) {
+        if (duration >= intervalInMilliseconds) {
           _onTimerTick();
 
           millisLastTick = now;
@@ -85,7 +85,7 @@ class SafeIntervalTimer {
     isolate = await Isolate.spawn(
       _optimisticIsolateTimer,
       {
-        'tickRate': tickRate,
+        'tickRate': intervalInMilliseconds,
         'sendToMainThreadPort': receiveFromIsolatePort.sendPort,
       },
     );
@@ -114,7 +114,7 @@ class SafeIntervalTimer {
     isolate = await Isolate.spawn(
       _pessimisticIsolateTimer,
       {
-        'tickRate': tickRate,
+        'tickRate': intervalInMilliseconds,
         'sendToMainThreadPort': receiveFromIsolatePort.sendPort,
       },
     );

@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialValue: safeIntervalTimer.bpm.toString(),
                 onChanged: (value) => setState(() {
                   safeIntervalTimer.bpm = int.tryParse(value) ?? safeIntervalTimer.bpm;
-                  safeIntervalTimer.tickRate = millisecondsPerMinute / safeIntervalTimer.bpm;
+                  safeIntervalTimer.intervalInMilliseconds = millisecondsPerMinute / safeIntervalTimer.bpm;
                 }),
               ),
               ElevatedButton(
@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
